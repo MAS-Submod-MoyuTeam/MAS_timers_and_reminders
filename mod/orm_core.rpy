@@ -16,10 +16,22 @@ init 10 python in otter_reminder:
         store.mas_submod_utils.submod_log.error(_LOG_PREFIX + msg)
 
 
+    class DNDict(dict):
+        def __init__(self, *args, **kw):
+            super(DNDict, self).__init__(*args, **kw)
+
+        def __getattr__(self, attr):
+            try:
+                return getattr(super(DNDict, self), attr)
+            except AttributeError:
+                return self[attr]
+
+
     class Target(object):
         def __init__(
             self,
-            key, event_label, trigger_at, grace_period, data=None,
+            key, event_label, trigger_at,
+            grace_period=datetime.timedelta(seconds=3600), data=None,
             delegate_evl="otter_reminder_delegate", delegate_act=EV_ACT_QUEUE
         ):
             if not store.mas_getEV(event_label):
@@ -31,7 +43,8 @@ init 10 python in otter_reminder:
             self.event_label = event_label
             self.trigger_at = trigger_at
             self.grace_period = grace_period
-            self.data = data
+            if type(data) is dict:
+                self.data = DNDict(data)
 
             self.delegate_evl = delegate_evl
             self.delegate_act = delegate_act
@@ -44,24 +57,24 @@ init 10 python in otter_reminder:
     # completes. Not to be confused with Timer which is repeatable.
     class Reminder(Target):
         def __init__(self, key, event_label, trigger_at, grace_period, interval, data=None):
-            super(TimeTriggerable, self).__init__(key, event_label, trigger_at, grace_period, data)
+            super(Reminder, self).__init__(key, event_label, trigger_at, grace_period, data)
             self.interval = interval
 
     # Timer is an extensible, repeatable target that fires multiple times
     # with set interval.
     class Timer(Target):
         def __init__(self, key, event_label, trigger_at, grace_period, data=None):
-            super(TimeTriggerable, self).__init__(key, event_label, trigger_at, grace_period, data)
+            super(Timer, self).__init__(key, event_label, trigger_at, grace_period, data)
 
-    store.ORM_TARGET_REMINDER = Reminder
-    store.ORM_TARGET_TIMER = Timer
+    store.orm_Reminder = Reminder
+    store.orm_Timer = Timer
 
 
     def add_target(target):
         persistent._orm_target_queue.append(target)
-        if type(orm_target) is ORM_TARGET_TIMER:
+        if type(orm_target) is orm_Timer:
             extend_target()
-        elif type(orm_target) is ORM_TARGET_REMINDER:
+        elif type(orm_target) is orm_Reminder:
             orm_cleanupTarget()
         setup_target()
 
@@ -155,6 +168,7 @@ init 10 python in otter_reminder:
 
         persistent._orm_target_queue.pop(0)
 
+    store.orm_addTarget = add_target
     store.orm_extendTarget = extend_target
     store.orm_cleanupTarget = cleanup_target
 
@@ -170,9 +184,9 @@ init 5 python:
 
 label otter_reminder_delegate:
     python:
-        if type(orm_target) is ORM_TARGET_TIMER:
+        if type(orm_target) is orm_Timer:
             orm_extendTarget()
-        elif type(orm_target) is ORM_TARGET_REMINDER:
+        elif type(orm_target) is orm_Reminder:
             orm_cleanupTarget()
         pushEvent(orm_target.event_label)
         setup_target()
