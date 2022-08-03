@@ -2,8 +2,15 @@
 # reminders, etc.)
 # First element (if queue is not empty) is current target.
 default persistent._orm_target_queue = list()
+default persistent._orm_target_keymap = dict()
+define orm_target = None
 
 init 10 python in otter_reminder:
+    import store
+    from store import persistent as persistent
+
+    import datetime
+
     _LOG_PREFIX = "[MAS Reminders Mod] "
 
     def log_info(msg):
@@ -16,23 +23,12 @@ init 10 python in otter_reminder:
         store.mas_submod_utils.submod_log.error(_LOG_PREFIX + msg)
 
 
-    class DNDict(dict):
-        def __init__(self, *args, **kw):
-            super(DNDict, self).__init__(*args, **kw)
-
-        def __getattr__(self, attr):
-            try:
-                return getattr(super(DNDict, self), attr)
-            except AttributeError:
-                return self[attr]
-
-
     class Target(object):
         def __init__(
             self,
             key, event_label, trigger_at,
             grace_period=datetime.timedelta(seconds=3600), data=None,
-            delegate_evl="otter_reminder_delegate", delegate_act=EV_ACT_QUEUE
+            delegate_evl="otter_reminder_delegate", delegate_act=store.EV_ACT_QUEUE
         ):
             if not store.mas_getEV(event_label):
                 raise ValueError("event {0} does not exist".format(event_label))
@@ -43,8 +39,7 @@ init 10 python in otter_reminder:
             self.event_label = event_label
             self.trigger_at = trigger_at
             self.grace_period = grace_period
-            if type(data) is dict:
-                self.data = DNDict(data)
+            self.data = data
 
             self.delegate_evl = delegate_evl
             self.delegate_act = delegate_act
@@ -53,18 +48,32 @@ init 10 python in otter_reminder:
         def overdue(self):
             return self.trigger_at + self.grace_period < datetime.datetime.now()
 
+        @property
+        def trigger(self):
+            return self.trigger_at <= datetime.datetime.now() <= self.trigger_at + self.grace_period
+
     # Reminder is a non-extensible, one-shot target that fires once and
     # completes. Not to be confused with Timer which is repeatable.
     class Reminder(Target):
-        def __init__(self, key, event_label, trigger_at, grace_period, interval, data=None):
+        def __init__(
+            self,
+            key, event_label, trigger_at,
+            grace_period=datetime.timedelta(seconds=3600), data=None,
+            delegate_evl="otter_reminder_delegate", delegate_act=store.EV_ACT_QUEUE
+        ):
             super(Reminder, self).__init__(key, event_label, trigger_at, grace_period, data)
-            self.interval = interval
 
     # Timer is an extensible, repeatable target that fires multiple times
     # with set interval.
     class Timer(Target):
-        def __init__(self, key, event_label, trigger_at, grace_period, data=None):
+        def __init__(
+            self,
+            key, event_label, trigger_at, interval,
+            grace_period=datetime.timedelta(seconds=3600), data=None,
+            delegate_evl="otter_reminder_delegate", delegate_act=store.EV_ACT_QUEUE
+        ):
             super(Timer, self).__init__(key, event_label, trigger_at, grace_period, data)
+            self.interval = interval
 
     store.orm_Reminder = Reminder
     store.orm_Timer = Timer
@@ -72,12 +81,20 @@ init 10 python in otter_reminder:
 
     def add_target(target):
         persistent._orm_target_queue.append(target)
-        if type(orm_target) is orm_Timer:
-            extend_target()
-        elif type(orm_target) is orm_Reminder:
-            orm_cleanupTarget()
+        persistent._orm_target_keymap[target.key] = target
+        if store.orm_target:
+            if type(store.orm_target) is Timer:
+                extend_target()
+            elif type(store.orm_target) is Reminder:
+                cleanup_target()
         setup_target()
 
+    def remove_target(key):
+        if type(key) is str:
+            target = persistent._orm_target_keymap.pop(key)
+        else:
+            target = key
+        persistent._orm_target_queue.remove(target)
 
     def setup_target():
         """
@@ -102,7 +119,7 @@ init 10 python in otter_reminder:
             if not persistent._orm_target_queue:
                 return
 
-            persistent._orm_target_queue.sort(key=lambda e: e[1].trigger_at)
+            persistent._orm_target_queue.sort(key=lambda e: e.trigger_at)
             target = persistent._orm_target_queue[0]
 
             ev = store.mas_getEV(target.delegate_evl)
@@ -141,7 +158,8 @@ init 10 python in otter_reminder:
             log_error("Delegate event {0} for target {1} does not exist, unable to extend timer.".format(target.delegate_evl, target.key))
             return
 
-        target.trigger_at += target.interval
+        while target.trigger:
+            target.trigger_at += target.interval
         setup_target()
 
     def cleanup_target():
@@ -169,6 +187,8 @@ init 10 python in otter_reminder:
         persistent._orm_target_queue.pop(0)
 
     store.orm_addTarget = add_target
+    store.orm_removeTarget = remove_target
+    store.orm_setupTarget = setup_target
     store.orm_extendTarget = extend_target
     store.orm_cleanupTarget = cleanup_target
 
@@ -176,7 +196,7 @@ init 10 python in otter_reminder:
 init 5 python:
     addEvent(
         Event(
-            persitent.event_database,
+            persistent.event_database,
             eventlabel="otter_reminder_delegate"
         ),
         code="EVE"
@@ -189,5 +209,5 @@ label otter_reminder_delegate:
         elif type(orm_target) is orm_Reminder:
             orm_cleanupTarget()
         pushEvent(orm_target.event_label)
-        setup_target()
+        orm_setupTarget()
     return

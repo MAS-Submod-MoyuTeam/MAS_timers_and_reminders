@@ -4,7 +4,7 @@ init 5 python:
     addEvent(
         Event(
             persistent.event_database,
-            event_label="otter_reminder_new",
+            eventlabel="otter_reminder_new",
             prompt="Can you remind me about something?",
             pool=True,
             unlocked=True
@@ -25,16 +25,26 @@ label otter_reminder_new:
         orm_addTarget(orm_Reminder(
             key=note,
             event_label="otter_reminder_callback",
-            trigger_at=datetime.datetime.now() + datetime.timedelta(seconds=3600)
+            trigger_at=datetime.datetime.now() + datetime.timedelta(seconds=10),
+            data=dict(note=note)
         ))
 
     m "Okay! I'll be sure to remind you about it~"
     return
 
+init 5 python:
+    addEvent(
+        Event(
+            persistent.event_database,
+            eventlabel="otter_reminder_callback"
+        ),
+        code="EVE"
+    )
+
 label otter_reminder_callback:
     m "[player], you wanted me to remind you about something!"
     m "Lemme read the note..."
-    $ note = orm_target.data.note
+    $ note = orm_target.data["note"]
     m "'[note]'"
     m "Hope it helped you, [mas_get_player_nickname()]~"
     return
