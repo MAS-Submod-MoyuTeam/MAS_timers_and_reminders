@@ -48,3 +48,14 @@ label otter_reminder_callback:
     m "'[note]'"
     m "Hope it helped you, [mas_get_player_nickname()]~"
     return
+    
+    
+    ##prompt for when to fire reminder
+    
+    "And when do you want me to remind you?"
+    
+    "In 5 minutes":
+    "In 30 minutes":
+    "In 1 hour":
+    "In 6 hours":
+    "Tomorrow":
