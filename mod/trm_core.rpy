@@ -97,12 +97,13 @@ init python in trm_core:
 ## Queue control functions
 
     queue = persistent._trm_queue
+    timer = queue[0] if queue else None
 
 
     def queue(timer):
         # Append timer to queue and re-sort the queue.
         queue.append(timer)
-        __sort_reset_queue(queue)
+        __sort_reset_queue()
 
 
     def dequeue_or_extend():
@@ -118,7 +119,8 @@ init python in trm_core:
         now = datetime.datetime.now()
         while timer.trigger >= now:
             timer.trigger += timer.interval
-        __sort_reset_queue(queue)
+
+        __sort_reset_queue()
 
 
     def dequeue_current():
@@ -140,19 +142,16 @@ init python in trm_core:
 
 
     def __sort_reset_queue():
-        # If queue is empty, we can just setup new timer and that's it.
-        if not queue:
-            __setup_timer_event(timer)
+        # Keep the reference to the old next event (first event in the queue),
+        # sort the queue, reset old next event and setup new next event.
+        old_next_t = queue[0]
+        queue.sort(key=lambda e: e.trigger)
+        if old_next_t != queue[0]:
+            __reset_timer_event(old_next_t)
+        __setup_timer_event(queue[0])
 
-        # If not, we need to keep the reference to the old next event (first
-        # event in the queue), sort the queue, reset old next event and setup
-        # new next event.
-        else:
-            old_next_t = queue[0]
-            queue.sort(key=lambda e: e.trigger)
-            if old_next_t != queue[0]:
-                __reset_timer_event(old_next_t)
-            __setup_timer_event(queue[0])
+        global timer
+        timer = queue[0]
 
 
     def __setup_timer_event(timer):
