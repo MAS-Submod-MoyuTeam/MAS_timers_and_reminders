@@ -1,12 +1,12 @@
 ## Queue that stores timers.
 default persistent._trm_queue = list()
 
-init python in trm_core:
+init 10 python in trm_core:
     import store
 
 ## Logging functions and constants
 
-    from store.mas_logging import submod_log
+    from store.mas_submod_utils import submod_log
 
 
     LOG_PREFIX = "[Timers and Reminders] "
@@ -28,6 +28,7 @@ init python in trm_core:
 
     from store import persistent
     from store import EV_ACT_QUEUE
+    import datetime
 
 
     class Timer(object):
@@ -100,7 +101,7 @@ init python in trm_core:
     timer = queue[0] if queue else None
 
 
-    def queue(timer):
+    def queue_timer(timer):
         # Append timer to queue and re-sort the queue.
         queue.append(timer)
         __sort_reset_queue()
@@ -117,7 +118,7 @@ init python in trm_core:
         # Wind up its trigger time again and re-sort the queue. No need to reset
         # the event here, this will be handled in __sort_reset_queue.
         now = datetime.datetime.now()
-        while timer.trigger >= now:
+        while timer.trigger <= now:
             timer.trigger += timer.interval
 
         __sort_reset_queue()
