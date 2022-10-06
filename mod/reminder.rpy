@@ -11,7 +11,7 @@ init 10 python in trm_reminder:
 
     class Reminder(object):
         def __init__(
-            self, trigger_at, target_evl, prompt,
+            self, trigger_at, target_evl, key, prompt,
             interval=None, grace_period=None, data=None,
             delegate_evl="trm_reminder_delegate", delegate_act=None
         ):
@@ -23,6 +23,7 @@ init 10 python in trm_reminder:
             if delegate_act is None:
                 delegate_act = EV_ACT_QUEUE
 
+            self.key = key
             self.prompt = prompt
             self.trigger_at = trigger_at
             self.target_evl = target_evl
@@ -34,16 +35,8 @@ init 10 python in trm_reminder:
             self.delegate_act = delegate_act
 
 
-        def __eq__(self, other):
-            return (
-                self.trigger_at == other.trigger_at and
-                self.target_evl == other.target_evl and
-                self.interval == other.interval and
-                self.grace_period == other.grace_period and
-                self.data == other.data and
-                self.delegate_evl == other.delegate_evl and
-                self.delegate_act == other.delegate_act
-            )
+        def __hash__(self):
+            return hash(self.key)
 
 
         @property
@@ -60,7 +53,7 @@ init 10 python in trm_reminder:
     def get_reminders():
         """
         Returns all queued reminders as ordered dictionary (preserving their
-        queue positions) of reminder prompts as keys and reminders as values.
+        queue positions) of reminder keys as keys and reminders as values.
 
         OUT:
             collections.OrderedDict:
@@ -69,7 +62,7 @@ init 10 python in trm_reminder:
 
         view = collections.OrderedDict()
         for rem in persistent._trm_queue:
-            view[rem.prompt] = rem
+            view[rem.key] = rem
         return view
 
 
@@ -84,6 +77,34 @@ init 10 python in trm_reminder:
 
         persistent._trm_queue.append(reminder)
         __sort_queue()
+
+
+    def dequeue_reminder(query):
+        """
+        Removes reminder located by the specified query parameter from the
+        queue and returns it.
+
+        IN:
+            query -> str or Reminder:
+                Value to lookup Reminder by, if str then key lookup is
+                performed, if Reminder then hash lookup is performed.
+
+        OUT:
+            Reminder:
+                Reminder that was dequeued if lookup was successful.
+            None:
+                None if lookup failed.
+        """
+
+        queue = persistent._trm_queue
+
+        if isinstance(query, str):
+            queue = list(map(lambda it: it.key, persistent._trm_queue))
+
+        try:
+            return persistent._trm_queue.pop(queue.index(query))
+        except ValueError:
+            return None
 
 
     def pop_reminder():
