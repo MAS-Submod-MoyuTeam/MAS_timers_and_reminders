@@ -7,10 +7,11 @@ init 10 python in trm_reminder:
     import datetime
     import time
     import math
+    import collections
 
     class Reminder(object):
         def __init__(
-            self, trigger_at, target_evl,
+            self, trigger_at, target_evl, prompt,
             interval=None, grace_period=None, data=None,
             delegate_evl="trm_reminder_delegate", delegate_act=None
         ):
@@ -22,6 +23,7 @@ init 10 python in trm_reminder:
             if delegate_act is None:
                 delegate_act = EV_ACT_QUEUE
 
+            self.prompt = prompt
             self.trigger_at = trigger_at
             self.target_evl = target_evl
 
@@ -53,6 +55,22 @@ init 10 python in trm_reminder:
 
     # Export Reminder with prefix to global store.
     store.trm_Reminder = Reminder
+
+
+    def get_reminders():
+        """
+        Returns all queued reminders as ordered dictionary (preserving their
+        queue positions) of reminder prompts as keys and reminders as values.
+
+        OUT:
+            collections.OrderedDict:
+                Reminders in queue.
+        """
+
+        view = collections.OrderedDict()
+        for rem in persistent._trm_queue:
+            view[rem.prompt] = rem
+        return view
 
 
     def queue_reminder(reminder):
