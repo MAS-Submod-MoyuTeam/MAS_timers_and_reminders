@@ -1,7 +1,7 @@
 define persistent._trm_queue = list()
 
 
-init 10 python:
+init 10 python in trm_reminder:
 
     import store
     from store import persistent, mas_getEV, EV_ACT_QUEUE
