@@ -304,7 +304,7 @@ init 10 python:
         return int(time.mktime(dt.utctimetuple()) * 1000 + dt.microsecond / 1000)
 
 
-init 10 python in trm_reminder:
+    # Load queue from persistent on start.
     __load_queue()
 
 
