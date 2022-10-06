@@ -1,4 +1,4 @@
-default persistent._trm_queue = list()
+define persistent._trm_queue = list()
 
 init 10 python in trm_reminder:
     import store
@@ -33,6 +33,10 @@ init 10 python in trm_reminder:
             self.data = data
             self.delegate_evl = delegate_evl
             self.delegate_act = delegate_act
+
+
+        def __eq__(self, other):
+            return isinstance(self, other) and self.key == other.key
 
 
         def __hash__(self):
