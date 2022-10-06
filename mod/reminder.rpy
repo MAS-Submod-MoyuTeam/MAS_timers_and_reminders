@@ -128,20 +128,23 @@ init 10 python in trm_reminder:
             search_list = list(map(lambda it: it.key, queue))
 
         try:
-            return pop_reminder(search_list.index(query))
+            return pop_reminder(search_list.index(query), remove=True)
         except ValueError as e:
             return None
 
 
-    def pop_reminder(index=None):
+    def pop_reminder(index=None, remove=False):
         """
         Pops the next (or specified) reminder (or extends it and updates the
         queue) and returns it. Raises an error in case queue is empty or if a
         reminder is before due.
 
         IN:
-            index -> int or None:
-                Index of reminder to remove.
+            index -> int or None, default None:
+                Index of reminder to remove or None to remove next.
+
+            remove -> bool, default False:
+                If True, remove a reminder, don't extend.
 
         OUT:
             Reminder:
@@ -162,7 +165,7 @@ init 10 python in trm_reminder:
             raise ValueError("queue is empty")
 
         reminder = queue[index]
-        if reminder.interval is not None:
+        if reminder.interval is not None and not remove:
             # Since this reminder has an interval and is extensible, don't drop
             # it from this queue but reuse and sort queue again.
             # Arming/disarming delegates is done in queue sort routine.
