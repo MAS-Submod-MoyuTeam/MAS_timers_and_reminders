@@ -128,32 +128,40 @@ init 10 python in trm_reminder:
             search_list = list(map(lambda it: it.key, queue))
 
         try:
-            rem = queue.pop(search_list.index(query))
-            __persist_queue()
-            return rem
-        except ValueError:
+            return pop_reminder(search_list.index(query))
+        except ValueError as e:
             return None
 
 
-    def pop_reminder():
+    def pop_reminder(index=None):
         """
-        Pops the next reminder (or extends it and updates the queue) and returns
-        it. Raises an error in case queue is empty or if a reminder is before due.
+        Pops the next (or specified) reminder (or extends it and updates the
+        queue) and returns it. Raises an error in case queue is empty or if a
+        reminder is before due.
+
+        IN:
+            index -> int or None:
+                Index of reminder to remove.
 
         OUT:
             Reminder:
-                Next reminder that is due or overdue. Reminder#due() can be used
-                to check if reminder is exactly due and not past grace period.
+                Next (or specified) reminder that is due or overdue.
+                Reminder#due() can be used to check if reminder is exactly due
+                and not past grace period.
 
         RAISES:
             ValueError:
-                When queue is empty or when next reminder is before due.
+                When queue is empty or when next (or specified) reminder is
+                before due.
         """
+
+        if index is None:
+            index = 0
 
         if len(queue) == 0:
             raise ValueError("queue is empty")
 
-        reminder = queue[0]
+        reminder = queue[index]
         now = datetime.datetime.now()
 
         if reminder.trigger_at > now:
@@ -169,7 +177,7 @@ init 10 python in trm_reminder:
         else:
             # The queue is sorted here, no need to sort again; just drop reminder
             # from this queue and disarm it, then arm next one if any.
-            queue.pop(0)
+            queue.pop(index)
             __disarm_reminder_delegate(reminder)
             if len(queue) > 0:
                 __arm_reminder_delegate(queue[0])
