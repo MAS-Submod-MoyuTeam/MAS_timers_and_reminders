@@ -1,7 +1,7 @@
 define persistent._trm_queue = list()
 
 
-init 10 python in trm_reminder:
+init 10 python:
 
     import store
     from store import persistent, mas_getEV, EV_ACT_QUEUE
@@ -12,9 +12,7 @@ init 10 python in trm_reminder:
     import collections
 
 
-python early:
-
-    class trm_Reminder(object):
+    class Reminder(object):
         def __init__(
             self, trigger_at, target_evl, key, prompt,
             interval=None, grace_period=None, data=None,
@@ -48,17 +46,33 @@ python early:
             return hash(self.key)
 
 
+        def to_dict(self):
+            return dict(
+                trigger_at=self.trigger_at,
+                target_evl=self.target_evl,
+                key=self.key,
+                prompt=self.prompt,
+                interval=self.interval,
+                grace_period=self.grace_period,
+                data=self.data,
+                delegate_evl=self.delegate_evl,
+                delegate_act=self.delegate_act
+            )
+
+
         @property
         def due(self):
             if self.grace_period is None:
                 return self.trigger_at <= datetime.datetime.now()
             return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
+    # Export Reminder with prefix to global store.
+    store.trm_Reminder = Reminder
 
-init 10 python in trm_reminder:
-
-    # Import Reminder with prefix to global store.
-    Reminder = store.trm_Reminder
+    # Create queue that holds actual Reminder objects which will be persisted
+    # as dictionaries because otherwise after uninstall users will end up with
+    # corrupted persistent.
+    queue = list()
 
 
     def get_reminders():
@@ -88,6 +102,7 @@ init 10 python in trm_reminder:
 
         persistent._trm_queue.append(reminder)
         __sort_queue()
+        __persist_queue()
 
 
     def dequeue_reminder(query):
@@ -113,7 +128,9 @@ init 10 python in trm_reminder:
             queue = list(map(lambda it: it.key, persistent._trm_queue))
 
         try:
-            return persistent._trm_queue.pop(queue.index(query))
+            rem = persistent._trm_queue.pop(queue.index(query))
+            __persist_queue()
+            return rem
         except ValueError:
             return None
 
@@ -156,6 +173,9 @@ init 10 python in trm_reminder:
             __disarm_reminder_delegate(reminder)
             if len(persistent._trm_queue) > 0:
                 __arm_reminder_delegate(persistent._trm_queue[0])
+
+        # Commit changes in queue to persistent.
+        __persist_queue()
 
         return reminder
 
@@ -207,6 +227,19 @@ init 10 python in trm_reminder:
         if len(persistent._trm_queue) > 0:
             # And setup a new delegate.
             __arm_reminder_delegate(persistent._trm_queue[0])
+
+
+    def __load_queue():
+        global queue
+        queue = list()
+        for rem_dict in persistent._trm_queue:
+            queue.append(Reminder(**rem_dict))
+
+
+    def __persist_queue():
+        persistent._trm_queue = list()
+        for rem in queue:
+            persistent._trm_queue.append(rem.to_dict())
 
 
     def __arm_reminder_delegate(reminder):
@@ -269,6 +302,10 @@ init 10 python in trm_reminder:
         """
 
         return int(time.mktime(dt.utctimetuple()) * 1000 + dt.microsecond / 1000)
+
+
+init 10 python in trm_reminder:
+    __load_queue()
 
 
 init 5 python:
