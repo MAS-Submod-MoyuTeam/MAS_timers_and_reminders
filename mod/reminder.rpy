@@ -162,11 +162,6 @@ init 10 python in trm_reminder:
             raise ValueError("queue is empty")
 
         reminder = queue[index]
-        now = datetime.datetime.now()
-
-        if reminder.trigger_at > now:
-            raise ValueError("cannot pop reminder that is before due")
-
         if reminder.interval is not None:
             # Since this reminder has an interval and is extensible, don't drop
             # it from this queue but reuse and sort queue again.
