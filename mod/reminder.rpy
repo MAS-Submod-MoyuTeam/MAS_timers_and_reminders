@@ -86,7 +86,7 @@ init 10 python in trm_reminder:
         """
 
         view = collections.OrderedDict()
-        for rem in persistent._trm_queue:
+        for rem in queue:
             view[rem.key] = rem
         return view
 
@@ -100,7 +100,7 @@ init 10 python in trm_reminder:
                 Reminder object to add to queue.
         """
 
-        persistent._trm_queue.append(reminder)
+        queue.append(reminder)
         __sort_queue()
         __persist_queue()
 
@@ -122,13 +122,13 @@ init 10 python in trm_reminder:
                 None if lookup failed.
         """
 
-        queue = persistent._trm_queue
+        search_list = queue
 
         if isinstance(query, str):
-            queue = list(map(lambda it: it.key, persistent._trm_queue))
+            search_list = list(map(lambda it: it.key, queue))
 
         try:
-            rem = persistent._trm_queue.pop(queue.index(query))
+            rem = queue.pop(search_list.index(query))
             __persist_queue()
             return rem
         except ValueError:
@@ -150,10 +150,10 @@ init 10 python in trm_reminder:
                 When queue is empty or when next reminder is before due.
         """
 
-        if len(persistent._trm_queue) == 0:
+        if len(queue) == 0:
             raise ValueError("queue is empty")
 
-        reminder = persistent._trm_queue[0]
+        reminder = queue[0]
         now = datetime.datetime.now()
 
         if reminder.trigger_at > now:
@@ -169,10 +169,10 @@ init 10 python in trm_reminder:
         else:
             # The queue is sorted here, no need to sort again; just drop reminder
             # from this queue and disarm it, then arm next one if any.
-            persistent._trm_queue.pop(0)
+            queue.pop(0)
             __disarm_reminder_delegate(reminder)
-            if len(persistent._trm_queue) > 0:
-                __arm_reminder_delegate(persistent._trm_queue[0])
+            if len(queue) > 0:
+                __arm_reminder_delegate(queue[0])
 
         # Commit changes in queue to persistent.
         __persist_queue()
@@ -217,16 +217,16 @@ init 10 python in trm_reminder:
         arms/disarms reminder delegates.
         """
 
-        if len(persistent._trm_queue) > 1:
-            curr_rem = persistent._trm_queue[0]
-            persistent._trm_queue.sort(key=lambda reminder: reminder.trigger_at)
-            if persistent._trm_queue[0] != curr_rem:
+        if len(queue) > 1:
+            curr_rem = queue[0]
+            queue.sort(key=lambda reminder: reminder.trigger_at)
+            if queue[0] != curr_rem:
                 # Next reminder isn't the one we had before, reset its delegate.
                 __disarm_reminder_delegate(curr_rem)
 
-        if len(persistent._trm_queue) > 0:
+        if len(queue) > 0:
             # And setup a new delegate.
-            __arm_reminder_delegate(persistent._trm_queue[0])
+            __arm_reminder_delegate(queue[0])
 
 
     def __load_queue():
