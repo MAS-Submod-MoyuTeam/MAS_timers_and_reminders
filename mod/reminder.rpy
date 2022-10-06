@@ -1,6 +1,8 @@
 define persistent._trm_queue = list()
 
+
 init 10 python in trm_reminder:
+
     import store
     from store import persistent, mas_getEV, EV_ACT_QUEUE
 
@@ -9,7 +11,10 @@ init 10 python in trm_reminder:
     import math
     import collections
 
-    class Reminder(object):
+
+python early:
+
+    class trm_Reminder(object):
         def __init__(
             self, trigger_at, target_evl, key, prompt,
             interval=None, grace_period=None, data=None,
@@ -36,7 +41,7 @@ init 10 python in trm_reminder:
 
 
         def __eq__(self, other):
-            return isinstance(self, other) and self.key == other.key
+            return isinstance(self, type(other)) and self.key == other.key
 
 
         def __hash__(self):
@@ -50,8 +55,10 @@ init 10 python in trm_reminder:
             return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
 
-    # Export Reminder with prefix to global store.
-    store.trm_Reminder = Reminder
+init 10 python in trm_reminder:
+
+    # Import Reminder with prefix to global store.
+    Reminder = store.trm_Reminder
 
 
     def get_reminders():
