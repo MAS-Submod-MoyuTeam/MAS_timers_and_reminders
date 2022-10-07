@@ -236,6 +236,10 @@ init 10 python in trm_reminder:
 
 
     def __load_queue():
+        """
+        Load and deserialize (from dictionary objects) queue from persistent.
+        """
+
         global queue
         queue = list()
         for rem_dict in persistent._trm_queue:
@@ -243,6 +247,11 @@ init 10 python in trm_reminder:
 
 
     def __persist_queue():
+        """
+        Serialize (to dictionary objects) and write reminders queue to
+        persistent.
+        """
+
         persistent._trm_queue = list()
         for rem in queue:
             persistent._trm_queue.append(rem.to_dict())
