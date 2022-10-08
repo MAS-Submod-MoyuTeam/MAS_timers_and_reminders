@@ -57,7 +57,7 @@ init 5 python:
         Event(
             persistent.event_database,
             eventlabel="trm_topic_reminder_oneshot",
-            prompt="Can you remind me about something?",
+            prompt="Can you create a timer for me?",
             category=["misc"],
             pool=True,
             unlocked=True
