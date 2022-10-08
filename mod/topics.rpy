@@ -12,9 +12,10 @@ init 5 python:
     )
 
 label trm_ev_reminder_delegate:
-    # TODO: Dialogue. On you, Gaby :>
     $ note = reminder.data["note"]
-    m 1hua "Got a reminder for you! It says... [note]!"
+    m 1hua "Hey [player]!"
+    m "I've got a reminder for you! "
+    extend "It says... [note]!"
     return
 
 
@@ -41,7 +42,6 @@ label trm_topic_reminder_remove:
     call screen mas_gen_scrollable_menu(items, mas_ui.SCROLLABLE_MENU_TXT_TALL_AREA, mas_ui.SCROLLABLE_MENU_XALIGN, ("Nevermind.", False, False, False, 0))
     show monika at t11
 
-    # TODO: Dialogue. This too, Gaby :}
     if _return is not False:
         m 3eub "Okay, I'll stop!"
         $ store.trm_reminder.dequeue_reminder(_return)
@@ -66,13 +66,12 @@ init 5 python:
     )
 
 label trm_topic_reminder_oneshot:
-    # TODO: Dialogue. Go for it, Gaby :P
-    m "Of course! Let me write it down so you won't forget what is it about..."
+    m "Of course! Let me write it down so I don't forget it..."
 
     label .set_note:
         python:
             note = mas_input(
-                "How should I remind you about it?",
+                "What should I remind you about?",
                 allow="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789",
                 length=32,
                 screen_kwargs={"use_return_button": True}
@@ -84,8 +83,8 @@ label trm_topic_reminder_oneshot:
             return
 
         if "reminder " + note.lower() in store.trm_reminder.get_reminders():
-            m "[player], I already have a reminder with note like this..."
-            m "I can label it somehow else so you don't get confused with both of them!"
+            m "[player], I already have a reminder with a note like this..."
+            m "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
     m "Okay! Now pick when should I remind you about it."
@@ -113,7 +112,7 @@ label trm_topic_reminder_oneshot:
         m "Oh, okay."
         return
 
-    m "Okay! I'll be sure not to forget~"
+    m "Okay! I'll make sure not to forget~"
 
     python:
         store.trm_reminder.queue_reminder(trm_Reminder(
@@ -131,7 +130,7 @@ init 5 python:
         Event(
             persistent.event_database,
             eventlabel="trm_topic_reminder_recurring",
-            prompt="Can you set a reminder for me?",
+            prompt="Can you set a recurring reminder for me?",
             category=["misc"],
             pool=True,
             unlocked=True
@@ -140,13 +139,12 @@ init 5 python:
     )
 
 label trm_topic_reminder_recurring:
-    # TODO: Dialogue. Final part, Gaby c:
-    m "Of course! Let me write it down so you won't forget what is it about..."
+    m "Of course! Let me write it down so I don't forget it..."
 
     label .set_note:
         python:
             note = mas_input(
-                "How should I remind you about it?",
+                "What should I remind you about?",
                 allow="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789",
                 length=32,
                 screen_kwargs={"use_return_button": True}
@@ -158,8 +156,8 @@ label trm_topic_reminder_recurring:
             return
 
         if "reminder " + note.lower() in store.trm_reminder.get_reminders():
-            m "[player], I already have a reminder with note like this..."
-            m "I can label it somehow else so you don't get confused with both of them!"
+            m "[player], I already have a reminder with a note like this..."
+            m "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
     m "Okay! Now pick when should how often should remind you about it."
