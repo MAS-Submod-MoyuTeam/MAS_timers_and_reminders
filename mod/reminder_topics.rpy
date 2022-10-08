@@ -160,7 +160,7 @@ label trm_topic_reminder_recurring:
             m 3ekb "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
-    m "Okay! Now pick when should how often should remind you about it."
+    m 3eub "Okay! Now pick when should how often should remind you about it."
 
     python:
         items = [
