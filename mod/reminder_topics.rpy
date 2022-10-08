@@ -13,9 +13,9 @@ init 5 python:
 
 label trm_ev_reminder_delegate:
     $ note = reminder.data["note"]
-    m 1hua "Hey [player]!"
-    m "I've got a reminder for you! "
-    extend "It says... [note]!"
+    m 7eub "Hey [player]!"
+    m 7eua "I've got a reminder for you! "
+    extend 7dub "It says... [note]!"
     return
 
 
@@ -66,7 +66,7 @@ init 5 python:
     )
 
 label trm_topic_reminder_oneshot:
-    m "Of course! Let me write it down so I don't forget it..."
+    m 7dub "Of course! Let me write it down so I don't forget it..."
 
     label .set_note:
         python:
@@ -79,15 +79,15 @@ label trm_topic_reminder_oneshot:
 
         if note == "cancel_input":
             # User has clicked "nevermind".
-            m "Oh, okay."
+            m 3eka "Oh, okay."
             return
 
         if "reminder " + note.lower() in store.trm_reminder.get_reminders():
-            m "[player], I already have a reminder with a note like this..."
-            m "I can label it something else so you don't get confused with both of them!"
+            m 3eka "[player], I already have a reminder with a note like this..."
+            m 3ekb "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
-    m "Okay! Now pick when should I remind you about it."
+    m 3eub "Okay! Now pick when should I remind you about it."
 
     python:
         items = [
@@ -109,10 +109,10 @@ label trm_topic_reminder_oneshot:
 
     if _return is False:
         # User has clicked "nevermind".
-        m "Oh, okay."
+        m 3eka "Oh, okay."
         return
 
-    m "Okay! I'll make sure not to forget~"
+    m 1hua "Okay! I'll make sure not to forget~"
 
     python:
         store.trm_reminder.queue_reminder(trm_Reminder(
@@ -139,7 +139,7 @@ init 5 python:
     )
 
 label trm_topic_reminder_recurring:
-    m "Of course! Let me write it down so I don't forget it..."
+    m 7dub "Of course! Let me write it down so I don't forget it..."
 
     label .set_note:
         python:
@@ -152,12 +152,12 @@ label trm_topic_reminder_recurring:
 
         if note == "cancel_input":
             # User has clicked "nevermind".
-            m "Oh, okay."
+            m 3eka "Oh, okay."
             return
 
         if "reminder " + note.lower() in store.trm_reminder.get_reminders():
-            m "[player], I already have a reminder with a note like this..."
-            m "I can label it something else so you don't get confused with both of them!"
+            m 3eka "[player], I already have a reminder with a note like this..."
+            m 3ekb "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
     m "Okay! Now pick when should how often should remind you about it."
@@ -182,10 +182,10 @@ label trm_topic_reminder_recurring:
 
     if _return is False:
         # User has clicked "nevermind".
-        m "Oh, okay."
+        m 3eka "Oh, okay."
         return
 
-    m "Okay! I'll be sure not to forget~"
+    m 1hua "Okay! I'll be sure not to forget~"
 
     python:
         store.trm_reminder.queue_reminder(trm_Reminder(
