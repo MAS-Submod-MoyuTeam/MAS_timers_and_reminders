@@ -36,7 +36,49 @@ label trm_topic_reminder_remove:
     python:
         items = list()
         for key, rem in store.trm_reminder.get_reminders().items():
-            items.append((renpy.substitute(rem.prompt), rem, False, False))
+            if rem.remaining.total_seconds() > 0:
+                hours = int(rem.remaining.total_seconds() // 3600)
+                minutes = int(rem.remaining.total_seconds() // 60)
+
+                if hours > 0:
+                    tn = hours
+                    tu = "hour"
+
+                elif minutes > 0:
+                    tn = minutes
+                    tu = "minute"
+
+                else:
+                    tn = int(rem.remaining.total_seconds())
+                    tu = "second"
+
+                eta = " (in {0} {1}".format(tn, tu)
+                if tn != 1:
+                    eta += "s"
+
+                if rem.interval is not None:
+                    hours = int(rem.interval.total_seconds() // 3600)
+                    minutes = int(rem.interval.total_seconds() // 60)
+
+                    if hours > 0:
+                        rn = hours
+                        ru = "hour"
+
+                    elif minutes > 0:
+                        rn = minutes
+                        ru = "minute"
+
+                    else:
+                        rn = int(rem.interval.total_seconds())
+                        ru = "second"
+
+                    eta += ", every {0} {1}".format(rn, ru)
+                    if rn != 1:
+                        eta += "s"
+
+                eta += ")"
+
+                items.append((renpy.substitute(rem.prompt) + eta, rem, False, False))
 
     show monika at t21
     call screen mas_gen_scrollable_menu(items, mas_ui.SCROLLABLE_MENU_TXT_TALL_AREA, mas_ui.SCROLLABLE_MENU_XALIGN, ("Nevermind.", False, False, False, 0))
