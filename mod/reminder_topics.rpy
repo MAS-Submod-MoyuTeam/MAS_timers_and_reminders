@@ -87,6 +87,8 @@ label trm_topic_reminder_remove:
     if _return is not False:
         m 3eub "Okay, I'll stop!"
         $ store.trm_reminder.dequeue_reminder(_return)
+        if len(items) == 1:
+            $ mas_hideEVL("trm_topic_reminder_remove", "EVE", lock=True)
 
     else:
         m 3eka "Oh, okay."
@@ -161,6 +163,8 @@ label trm_topic_reminder_oneshot:
             trigger_at=datetime.datetime.now() + _return,
             target_evl="trm_ev_reminder_delegate"
         ))
+
+    $ mas_showEVL("trm_topic_reminder_remove", "EVE", unlock=True)
     return
 
 
@@ -232,4 +236,6 @@ label trm_topic_reminder_recurring:
             interval=_return,
             target_evl="trm_ev_reminder_delegate"
         ))
+
+    $ mas_showEVL("trm_topic_reminder_remove", "EVE", unlock=True)
     return
