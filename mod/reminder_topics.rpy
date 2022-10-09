@@ -12,7 +12,7 @@ init 5 python:
     )
 
 label trm_ev_reminder_delegate:
-    $ note = reminder.prompt
+    $ note = renpy.substitute(reminder.prompt)
     m 7eub "Hey [player]!"
     m 7eua "I've got a reminder for you! "
     extend 7dub "It says... [note]!"
