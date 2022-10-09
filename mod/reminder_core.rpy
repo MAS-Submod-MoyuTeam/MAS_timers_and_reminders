@@ -106,6 +106,19 @@ init 10 python in trm_reminder:
                 return self.trigger_at <= datetime.datetime.now()
             return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
+        @property
+        def remaining(self):
+            """
+            Returns timedelta between current date and time and trigger date and
+            time.
+
+            OUT:
+                datetime.timedelta:
+                    Time until this Reminder triggers.
+            """
+
+            return self.trigger_at - datetime.datetime.now()
+
         @staticmethod
         def from_dict(_dict):
             """
