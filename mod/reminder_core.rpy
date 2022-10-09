@@ -37,14 +37,15 @@ init 10 python in trm_reminder:
             self.delegate_evl = delegate_evl
             self.delegate_act = delegate_act
 
+        @property
+        def due(self):
+            if self.grace_period is None:
+                return self.trigger_at <= datetime.datetime.now()
+            return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
-        def __eq__(self, other):
-            return isinstance(self, type(other)) and self.key == other.key
-
-
-        def __hash__(self):
-            return hash(self.key)
-
+        @staticmethod
+        def from_dict(self, _dict):
+            return Reminder(**_dict)
 
         def to_dict(self):
             return dict(
@@ -59,12 +60,11 @@ init 10 python in trm_reminder:
                 delegate_act=self.delegate_act
             )
 
+        def __eq__(self, other):
+            return isinstance(self, type(other)) and self.key == other.key
 
-        @property
-        def due(self):
-            if self.grace_period is None:
-                return self.trigger_at <= datetime.datetime.now()
-            return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
+        def __hash__(self):
+            return hash(self.key)
 
     # Export Reminder with prefix to global store.
     store.trm_Reminder = Reminder
@@ -243,7 +243,7 @@ init 10 python in trm_reminder:
         global queue
         queue = list()
         for rem_dict in persistent._trm_queue:
-            queue.append(Reminder(**rem_dict))
+            queue.append(Reminder.from_dict(rem_dict))
 
 
     def __persist_queue():
