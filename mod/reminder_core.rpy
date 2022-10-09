@@ -13,11 +13,61 @@ init 10 python in trm_reminder:
 
 
     class Reminder(object):
+        """
+        Reminder represents a Reminder, recurring or one-shot. Recurring
+        reminders have interval set, one-shot reminders have not.
+
+        Reminders integrate with queue that updates their delegate events with
+        trigger datetimes and actions and, correspondingly, delegate events that
+        keep the queue going.
+        """
+
         def __init__(
             self, trigger_at, target_evl, key, prompt,
             interval=None, grace_period=None, data=None,
             delegate_evl="trm_reminder_delegate", delegate_act=None
         ):
+            """
+            Create an instance of Reminder with the provided properties.
+
+            IN:
+                trigger_at -> datetime.datetime:
+                    Date and time to trigger this reminder at.
+                    NOTE: due to how MAS events work, there is no guarantee it
+                    will trigger right at this date and time. It will always be
+                    delayed by some insignificant amount of time.
+
+                target_evl -> str:
+                    Target event label to queue for this reminder.
+
+                key -> str:
+                    Unique key used to distinguish two reminders from each
+                    other.
+
+                prompt -> str:
+                    Prompt of this Reminder, user's note attached to it.
+
+                interval -> datetime.timedelta or None, default None:
+                    Interval to set for this recurring Reminder. If None, then
+                    this Reminder is one-shot.
+
+                grace_period -> datetime.timedelta or None, default None:
+                    Grace period to set for this reminder. If None, then this
+                    Reminder has no grace period and it will always be due and
+                    never overdue.
+
+                data -> any or None, default None:
+                    Arbitrary data to assign to this Reminder to use in
+                    triggered topics and reminder handlers.
+
+                delegate_evl -> str or None, default "trm_reminder_delegate":
+                    Event label of delegate event that will be queued for this
+                    Reminder after it has been processed by the queue.
+
+                delegate_act -> str or None, default EV_ACT_QUEUE:
+                    Action to use on delegate event.
+            """
+
             if mas_getEV(target_evl) is None:
                 raise ValueError("target event {0} does not exist".format(target_evl))
             if mas_getEV(delegate_evl) is None:
@@ -39,15 +89,50 @@ init 10 python in trm_reminder:
 
         @property
         def due(self):
+            """
+            Checks if this Reminder is due its date and time:
+
+                * If grace period is set, it checks if this Reminder is past
+                  its trigger date and time and before the grace period ends.
+                * If grace period is not set, it checks if this Reminder is
+                  past its trigger date.
+
+            OUT:
+                bool:
+                    True if this reminder is due its date and time.
+            """
+
             if self.grace_period is None:
                 return self.trigger_at <= datetime.datetime.now()
             return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
         @staticmethod
         def from_dict(self, _dict):
+            """
+            Deserializes dictionary object produced by to_dict method to an
+            object instance of this Reminder class.
+
+            IN:
+                _dict -> dict[str, any]:
+                    Serialized dictionary to deserialize.
+
+            OUT:
+                Reminder:
+                    Reminder deserialized from provided dictionary.
+            """
+
             return Reminder(**_dict)
 
         def to_dict(self):
+            """
+            Serializes this Reminder object to dictionary for storing it in
+            persistent where it is problematic to keep actual class objects in.
+
+            OUT:
+                dict:
+                    Dictionary compatiblee with from_dict static method.
+            """
+
             return dict(
                 trigger_at=self.trigger_at,
                 target_evl=self.target_evl,
@@ -61,9 +146,30 @@ init 10 python in trm_reminder:
             )
 
         def __eq__(self, other):
+            """
+            Compares this Reminder object to any other object and returns bool
+            value if they are equal or not.
+
+            IN:
+                other -> any:
+                    Object to compare with.
+
+            OUT:
+                bool:
+                    True if objects are equal, False otherwise.
+            """
+
             return isinstance(self, type(other)) and self.key == other.key
 
         def __hash__(self):
+            """
+            Generates a hash for this Reminder object based on its key.
+
+            OUT:
+                int:
+                    Hash for this Reminder object.
+            """
+
             return hash(self.key)
 
     # Export Reminder with prefix to global store.
