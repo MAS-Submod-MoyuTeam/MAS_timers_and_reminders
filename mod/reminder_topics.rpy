@@ -78,7 +78,6 @@ label trm_topic_reminder_oneshot:
             )
 
         if note == "cancel_input":
-            # User has clicked "nevermind".
             m 3eka "Oh, okay."
             return
 
@@ -108,7 +107,6 @@ label trm_topic_reminder_oneshot:
     show monika at t11
 
     if _return is False:
-        # User has clicked "nevermind".
         m 3eka "Oh, okay."
         return
 
