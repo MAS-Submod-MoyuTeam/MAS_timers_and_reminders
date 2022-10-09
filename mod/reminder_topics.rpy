@@ -12,7 +12,7 @@ init 5 python:
     )
 
 label trm_ev_reminder_delegate:
-    $ note = reminder.data["note"]
+    $ note = reminder.prompt
     m 7eub "Hey [player]!"
     m 7eua "I've got a reminder for you! "
     extend 7dub "It says... [note]!"
@@ -117,8 +117,7 @@ label trm_topic_reminder_oneshot:
             key="reminder " + note.lower(),
             prompt=note,
             trigger_at=datetime.datetime.now() + _return,
-            target_evl="trm_ev_reminder_delegate",
-            data=dict(note=note)
+            target_evl="trm_ev_reminder_delegate"
         ))
     return
 
@@ -189,7 +188,6 @@ label trm_topic_reminder_recurring:
             prompt=note,
             trigger_at=datetime.datetime.now() + _return,
             interval=_return,
-            target_evl="trm_ev_reminder_delegate",
-            data=dict(note=note)
+            target_evl="trm_ev_reminder_delegate"
         ))
     return
