@@ -107,7 +107,7 @@ init 10 python in trm_reminder:
             return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
 
         @staticmethod
-        def from_dict(self, _dict):
+        def from_dict(_dict):
             """
             Deserializes dictionary object produced by to_dict method to an
             object instance of this Reminder class.
