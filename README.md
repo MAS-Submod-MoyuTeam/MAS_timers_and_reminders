@@ -28,7 +28,7 @@
 
 ## ❓ Download instructions
 
-You can check the detailed download instructions at the [wiki]().
+You can check the detailed download instructions at the [wiki](https://github.com/my-otter-self/MAS_timers_and_reminders/wiki/%E2%9D%93-Download-instructions).
 
 
 ## ✒️ Authors
