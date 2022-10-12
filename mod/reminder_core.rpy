@@ -1,7 +1,7 @@
 define persistent._trm_queue = list()
 
 
-init 10 python in trm_reminder:
+init 10 python in _trm_reminder:
 
     import store
     from store import persistent, mas_getEV, EV_ACT_QUEUE
@@ -190,8 +190,6 @@ init 10 python in trm_reminder:
 
             return hash(self.key)
 
-    # Export Reminder with prefix to global store.
-    store.trm_Reminder = Reminder
 
     # Create queue that holds actual Reminder objects which will be persisted
     # as dictionaries because otherwise after uninstall users will end up with
@@ -466,7 +464,7 @@ init 5 python:
     )
 
 label trm_reminder_delegate:
-    $ reminder = store.trm_reminder.pop_reminder()
+    $ reminder = store._trm_reminder.pop_reminder()
     if reminder.due:
         # If this reminder is past trigger time but within grace period
         # or doesn't have one, queue it. Else silently drop.

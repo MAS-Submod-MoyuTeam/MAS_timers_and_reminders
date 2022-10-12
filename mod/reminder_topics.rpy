@@ -35,8 +35,7 @@ init 5 python:
 label trm_topic_reminder_remove:
     python:
         items = list()
-        for key, rem in store.trm_reminder.get_reminders().items():
-            if rem.remaining.total_seconds() > 0:
+        for key, rem in store._trm_reminder.get_reminders().items():
                 hours = int(rem.remaining.total_seconds() // 3600)
                 minutes = int(rem.remaining.total_seconds() // 60)
 
@@ -86,7 +85,7 @@ label trm_topic_reminder_remove:
 
     if _return is not False:
         m 3eub "Okay, I'll stop!"
-        $ store.trm_reminder.dequeue_reminder(_return)
+        $ store._trm_reminder.dequeue_reminder(_return)
         if len(items) == 1:
             $ mas_hideEVL("trm_topic_reminder_remove", "EVE", lock=True)
 
@@ -197,7 +196,7 @@ label trm_topic_reminder_recurring:
             m 3eka "Oh, okay."
             return
 
-        if "reminder " + note.lower() in store.trm_reminder.get_reminders():
+        elif "reminder " + note.lower() in store._trm_reminder.get_reminders():
             m 3eka "[player], I already have a reminder with a note like this..."
             m 3ekb "I can label it something else so you don't get confused with both of them!"
             jump .set_note
@@ -229,7 +228,7 @@ label trm_topic_reminder_recurring:
     m 1hua "Okay! I'll be sure not to forget~"
 
     python:
-        store.trm_reminder.queue_reminder(trm_Reminder(
+        store._trm_reminder.queue_reminder(store._trm_reminder.Reminder(
             key="reminder " + note.lower(),
             prompt=note,
             trigger_at=datetime.datetime.now() + _return,
