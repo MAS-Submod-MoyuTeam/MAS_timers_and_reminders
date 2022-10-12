@@ -3,7 +3,7 @@ init -990 python in mas_submod_utils:
         author="otter",
         name="Timers and Reminders",
         description="Allows Monika to set up custom reminders and timers for the player",
-        version="1.0.0"
+        version="1.0.1"
     )
 
 init -989 python:
