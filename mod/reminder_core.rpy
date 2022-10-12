@@ -102,9 +102,14 @@ init 10 python in trm_reminder:
                     True if this reminder is due its date and time.
             """
 
+            now = datetime.datetime.now()
+
+            if self.trigger_at > now and self.interval is not None:
+                now -= self.interval
+
             if self.grace_period is None:
-                return self.trigger_at <= datetime.datetime.now()
-            return self.trigger_at <= datetime.datetime.now() < self.trigger_at + self.grace_period
+                return self.trigger_at <= now
+            return self.trigger_at <= now < self.trigger_at + self.grace_period
 
         @property
         def remaining(self):
