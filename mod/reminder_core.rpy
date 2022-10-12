@@ -325,15 +325,24 @@ init 10 python in trm_reminder:
         if reminder.interval is None:
             raise ValueError("reminder has no interval")
 
-        now_ts = int(time.time())
-        trigger_ts = __dt_timestamp(reminder.trigger_at)
+        # NOTE: *IDEALLY* this has to be done math way without any loops
+        #  so no CPU cycles wasted on such a simple task.
 
-        if trigger_ts > now_ts:
+        # now_ts = __dt_timestamp(datetime.datetime.now())
+        # trigger_ts = __dt_timestamp(reminder.trigger_at)
+
+        now = datetime.datetime.now()
+
+        # if trigger_ts > now_ts:
+        if reminder.trigger_at > now:
             return
 
-        diff = now_ts - trigger_ts
-        iters = math.ceil(diff / reminder.interval)
-        reminder.trigger_at += reminder.interval * iters
+        while reminder.trigger_at < now:
+            reminder.trigger_at += reminder.interval
+
+        # diff = now_ts - trigger_ts
+        # iters = math.ceil(diff / int(reminder.interval.total_seconds()))
+        # reminder.trigger_at += reminder.interval * iters
 
 
     def __sort_queue():
