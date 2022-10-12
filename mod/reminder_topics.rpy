@@ -36,6 +36,10 @@ label trm_topic_reminder_remove:
     python:
         items = list()
         for key, rem in store._trm_reminder.get_reminders().items():
+            if rem.remaining.total_seconds() <= 0:
+                eta = ""
+
+            else:
                 hours = int(rem.remaining.total_seconds() // 3600)
                 minutes = int(rem.remaining.total_seconds() // 60)
 
@@ -109,61 +113,7 @@ init 5 python:
     )
 
 label trm_topic_reminder_oneshot:
-    m 7dub "Of course! Let me write it down so I don't forget it..."
-
-    label .set_note:
-        python:
-            note = mas_input(
-                "What should I remind you about?",
-                allow="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789",
-                length=32,
-                screen_kwargs={"use_return_button": True}
-            )
-
-        if note == "cancel_input":
-            m 3eka "Oh, okay."
-            return
-
-        if "reminder " + note.lower() in store.trm_reminder.get_reminders():
-            m 3eka "[player], I already have a reminder with a note like this..."
-            m 3ekb "I can label it something else so you don't get confused with both of them!"
-            jump .set_note
-
-    m 3eub "Okay! Now pick when should I remind you about it."
-
-    python:
-        items = [
-            ("In 5 minutes", datetime.timedelta(seconds=300), False, False),
-            ("In 10 minutes", datetime.timedelta(seconds=600), False, False),
-            ("In 15 minutes", datetime.timedelta(seconds=900), False, False),
-            ("In 30 minutes", datetime.timedelta(seconds=1800), False, False),
-            ("In 1 hour", datetime.timedelta(seconds=3600), False, False),
-            ("In 2 hours", datetime.timedelta(seconds=7200), False, False),
-            ("In 3 hours", datetime.timedelta(seconds=10800), False, False),
-            ("In 6 hours", datetime.timedelta(seconds=21600), False, False),
-            ("In 12 hours", datetime.timedelta(seconds=43200), False, False),
-            ("In 24 hours", datetime.timedelta(days=1), False, False)
-        ]
-
-    show monika at t21
-    call screen mas_gen_scrollable_menu(items, mas_ui.SCROLLABLE_MENU_TXT_TALL_AREA, mas_ui.SCROLLABLE_MENU_XALIGN, ("Nevermind.", False, False, False, 4))
-    show monika at t11
-
-    if _return is False:
-        m 3eka "Oh, okay."
-        return
-
-    m 1hua "Okay! I'll make sure not to forget~"
-
-    python:
-        store.trm_reminder.queue_reminder(trm_Reminder(
-            key="reminder " + note.lower(),
-            prompt=note,
-            trigger_at=datetime.datetime.now() + _return,
-            target_evl="trm_ev_reminder_delegate"
-        ))
-
-    $ mas_showEVL("trm_topic_reminder_remove", "EVE", unlock=True)
+    call trm_topic_reminder_create(recurring=False)
     return
 
 
@@ -181,6 +131,11 @@ init 5 python:
     )
 
 label trm_topic_reminder_recurring:
+    call trm_topic_reminder_create(recurring=True)
+    return
+
+
+label trm_topic_reminder_create(recurring):
     m 7dub "Of course! Let me write it down so I don't forget it..."
 
     label .set_note:
@@ -192,7 +147,12 @@ label trm_topic_reminder_recurring:
                 screen_kwargs={"use_return_button": True}
             )
 
-        if note == "cancel_input":
+        if note == "":
+            m 3hka "[player], you didn't write anything!"
+            m 1hua "Try again~"
+            jump .set_note
+
+        elif note == "cancel_input":
             m 3eka "Oh, okay."
             return
 
@@ -201,20 +161,25 @@ label trm_topic_reminder_recurring:
             m 3ekb "I can label it something else so you don't get confused with both of them!"
             jump .set_note
 
-    m 3eub "Okay! Now pick when should how often should remind you about it."
+    if recurring:
+        $ quip = "Okay! Now pick when should how often should remind you about it."
+    else:
+        $ quip = "Okay! Now pick when should I remind you about it."
+    m 3eub "[quip]"
 
     python:
+        item_prefix = "Every " if recurring else "In "
         items = [
-            ("Every 5 minutes", datetime.timedelta(seconds=300), False, False),
-            ("Every 10 minutes", datetime.timedelta(seconds=600), False, False),
-            ("Every 15 minutes", datetime.timedelta(seconds=900), False, False),
-            ("Every 30 minutes", datetime.timedelta(seconds=1800), False, False),
-            ("Every 1 hour", datetime.timedelta(seconds=3600), False, False),
-            ("Every 2 hours", datetime.timedelta(seconds=7200), False, False),
-            ("Every 3 hours", datetime.timedelta(seconds=10800), False, False),
-            ("Every 6 hours", datetime.timedelta(seconds=21600), False, False),
-            ("Every 12 hours", datetime.timedelta(seconds=43200), False, False),
-            ("Every 24 hours", datetime.timedelta(days=1), False, False)
+            (item_prefix + "5 minutes", datetime.timedelta(seconds=300), False, False),
+            (item_prefix + "10 minutes", datetime.timedelta(seconds=600), False, False),
+            (item_prefix + "15 minutes", datetime.timedelta(seconds=900), False, False),
+            (item_prefix + "30 minutes", datetime.timedelta(seconds=1800), False, False),
+            (item_prefix + "1 hour", datetime.timedelta(seconds=3600), False, False),
+            (item_prefix + "2 hours", datetime.timedelta(seconds=7200), False, False),
+            (item_prefix + "3 hours", datetime.timedelta(seconds=10800), False, False),
+            (item_prefix + "6 hours", datetime.timedelta(seconds=21600), False, False),
+            (item_prefix + "12 hours", datetime.timedelta(seconds=43200), False, False),
+            (item_prefix + "24 hours", datetime.timedelta(days=1), False, False)
         ]
 
     show monika at t21
@@ -232,7 +197,7 @@ label trm_topic_reminder_recurring:
             key="reminder " + note.lower(),
             prompt=note,
             trigger_at=datetime.datetime.now() + _return,
-            interval=_return,
+            interval=_return if recurring else None,
             target_evl="trm_ev_reminder_delegate"
         ))
 
