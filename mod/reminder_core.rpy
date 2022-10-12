@@ -105,6 +105,8 @@ init 10 python in _trm_reminder:
             now = datetime.datetime.now()
 
             # NOTE: This is a crude workaround, need a better way to handle
+            #  extension in recurring reminders as this check is made AFTER
+            #  recurring rendering it unqueued otherwise.
             if self.trigger_at > now and self.interval is not None:
                 now += self.interval
 
