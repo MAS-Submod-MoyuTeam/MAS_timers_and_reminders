@@ -104,6 +104,7 @@ init 10 python in _trm_reminder:
 
             now = datetime.datetime.now()
 
+            # NOTE: This is a crude workaround, need a better way to handle
             if self.trigger_at > now and self.interval is not None:
                 now += self.interval
 
