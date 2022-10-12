@@ -81,7 +81,7 @@ label trm_topic_reminder_remove:
 
                 eta += ")"
 
-                items.append((renpy.substitute(rem.prompt) + eta, rem, False, False))
+            items.append((renpy.substitute(rem.prompt) + eta, rem, False, False))
 
     show monika at t21
     call screen mas_gen_scrollable_menu(items, mas_ui.SCROLLABLE_MENU_TXT_TALL_AREA, mas_ui.SCROLLABLE_MENU_XALIGN, ("Nevermind.", False, False, False, 0))
