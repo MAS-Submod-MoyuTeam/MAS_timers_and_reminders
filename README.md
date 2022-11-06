@@ -2,9 +2,6 @@
 <h4 align="center">Allows Monika to set up custom reminders and timers for the player</h3>
 
 <p align="center">
-  <a href="https://github.com/my-otter-self/MAS_timers_and_reminders/actions/workflows/check.yml">
-    <img alt="Build status" src="https://img.shields.io/github/workflow/status/my-otter-self/MAS_timers_and_reminders/Run%20checks%20on%20push/main">
-  </a>
   <a href="https://github.com/my-otter-self/MAS_timers_and_reminders/releases/latest">
     <img alt="Latest release" src="https://img.shields.io/github/v/release/my-otter-self/MAS_timers_and_reminders">
   </a>
