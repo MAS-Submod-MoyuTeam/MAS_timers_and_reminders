@@ -8,14 +8,14 @@
   <a href="https://github.com/my-otter-self/MAS_timers_and_reminders/releases">
     <img alt="Release downloads" src="https://img.shields.io/github/downloads/my-otter-self/MAS_timers_and_reminders/total">
   </a>
-  <a href="https://mon.icu/discord">
-    <img alt="Discord server" src="https://discordapp.com/api/guilds/970747033071804426/widget.png?style=shield">
-  </a>
   <a href="https://github.com/my-otter-self/MAS_selfharm/blob/main/LICENSE.txt">
     <img alt="Creative Commons BY-NC-ND 4.0 license badge" src="https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-lightgrey.svg">
   </a>
 </p>
 
+## ⚠️ Important notice (please read!)
+
+This submod is no longer mantained as of Monika After Story's recent update (v0.12.12). I, Otter, the main dev, decided to stop creating submods and focusing on working on the main mod, Monika After Story. It has always been my dream to focus on contributing officially and it's wonderful to be able to actually do that. Thank you so much for your support so far and all the kind and appreciative words. Also thanks for the understanding. You can follow my work in the future MAS official mod releases.
 
 ## 🌟 Features
 
