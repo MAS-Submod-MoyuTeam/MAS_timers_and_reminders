@@ -17,7 +17,7 @@
 
 > This submod is no longer mantained as of Monika After Story's recent update (v0.12.12). I, Otter, the main dev, decided to stop creating submods and focusing on working on the main mod, Monika After Story. It has always been my dream to focus on contributing officially and it's wonderful to be able to actually do that. Thank you so much for your support so far and all the kind and appreciative words. Also thanks for the understanding. You can follow my work in the future MAS official mod releases.
 
-懒得认真翻了，以上内容就是作者进MAS开发组了，所以子模组不维护了
+懒得认真翻了，以上内容就是作者进MAS开发组了，所以MASv0.12.12以后子模组不维护了
 ## 🌟 功能
 
   * 无限的计时器
