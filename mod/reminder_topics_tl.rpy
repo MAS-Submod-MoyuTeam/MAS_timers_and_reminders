@@ -90,7 +90,7 @@ translate chinese python:
             persistent.event_database,
             eventlabel="trm_topic_reminder_remove",
             prompt="有些事情你可以不用再提醒我了?",
-            category=["其他"],
+            category=["其它"],
             pool=True,
             rules={"no_unlock": None}
         ),
@@ -101,7 +101,7 @@ translate chinese python:
             persistent.event_database,
             eventlabel="trm_topic_reminder_oneshot",
             prompt="你可以为我计时吗?",
-            category=["其他"],
+            category=["其它"],
             pool=True,
             unlocked=True
         ),
@@ -112,7 +112,7 @@ translate chinese python:
             persistent.event_database,
             eventlabel="trm_topic_reminder_recurring",
             prompt="你可以定期提醒我一件事吗?",
-            category=["其他"],
+            category=["其它"],
             pool=True,
             unlocked=True
         ),
