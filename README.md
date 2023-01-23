@@ -13,28 +13,28 @@
   </a>
 </p>
 
-## ⚠️ Important notice (please read!)
+## ⚠️ 重要通知 (please read!)
 
-This submod is no longer mantained as of Monika After Story's recent update (v0.12.12). I, Otter, the main dev, decided to stop creating submods and focusing on working on the main mod, Monika After Story. It has always been my dream to focus on contributing officially and it's wonderful to be able to actually do that. Thank you so much for your support so far and all the kind and appreciative words. Also thanks for the understanding. You can follow my work in the future MAS official mod releases.
+> This submod is no longer mantained as of Monika After Story's recent update (v0.12.12). I, Otter, the main dev, decided to stop creating submods and focusing on working on the main mod, Monika After Story. It has always been my dream to focus on contributing officially and it's wonderful to be able to actually do that. Thank you so much for your support so far and all the kind and appreciative words. Also thanks for the understanding. You can follow my work in the future MAS official mod releases.
 
-## 🌟 Features
+懒得认真翻了，以上内容就是作者进MAS开发组了，所以子模组不维护了
+## 🌟 功能
 
-  * Storage of countless of timers
-  * Storage of countless of reminders
+  * 无限的计时器
+  * 莫妮卡大公无私毫无限制的提醒你 :)
 
 
-## ✒️ Authors
+## ✒️ 作者
 
 <p align="center">
-  <a href="https://github.com/my-otter-self/MAS_timers_and_reminders/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=my-otter-self/MAS_timers_and_reminders&max=6" />
-  </a>
+<a href="https://github.com/MAS-Submod-MoyuTeam/MAS_timers_and_reminders/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=MAS-Submod-MoyuTeam/MAS_timers_and_reminders" />
+</a>
 </p>
 
-**Note:** CC BY-NC-ND 4.0 only covers content created by authors, contributors or maintainers of this mod (repository) and does not cover
-anything that was created by third party.
+**注意:** CC BY-NC-ND 4.0 仅涵盖此 mod（存储库）的作者、贡者或维护者创建的内容，不涵盖第三方创建的任何内容。
 
-## 💚 MAS Repository
-Here you can see the official Monika After Story repository!
+## 💚 MAS 存储库
+以下为MAS的官方Github rep!
 
 [![card](https://github-readme-stats.vercel.app/api/pin/?username=Monika-After-Story&repo=MonikaModDev)](https://github.com/Monika-After-Story/MonikaModDev)
