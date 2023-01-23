@@ -70,7 +70,7 @@ translate chinese trm_topic_reminder_create_set_note_10e60243:
 translate chinese trm_topic_reminder_create_set_note_049d2106:
 
     # m 3eub "[quip]"
-    m 3eub "[啧]"
+    m 3eub "[quip]"
 
 # game/Submods/Timers and Reminders/reminder_topics.rpy:190
 translate chinese trm_topic_reminder_create_set_note_b7d1fb4d_1:
