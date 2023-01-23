@@ -45,19 +45,19 @@ label trm_topic_reminder_remove:
 
                 if hours > 0:
                     tn = hours
-                    tu = "hour"
+                    tu = "小时"
 
                 elif minutes > 0:
                     tn = minutes
-                    tu = "minute"
+                    tu = "分钟"
 
                 else:
                     tn = int(rem.remaining.total_seconds())
-                    tu = "second"
+                    tu = "秒"
 
-                eta = " (in {0} {1}".format(tn, tu)
+                eta = " (在 {0} {1} 后".format(tn, tu)
                 if tn != 1:
-                    eta += "s"
+                    eta += ""
 
                 if rem.interval is not None:
                     hours = int(rem.interval.total_seconds() // 3600)
@@ -65,19 +65,19 @@ label trm_topic_reminder_remove:
 
                     if hours > 0:
                         rn = hours
-                        ru = "hour"
+                        ru = "小时"
 
                     elif minutes > 0:
                         rn = minutes
-                        ru = "minute"
+                        ru = "分钟"
 
                     else:
                         rn = int(rem.interval.total_seconds())
-                        ru = "second"
+                        ru = "秒"
 
-                    eta += ", every {0} {1}".format(rn, ru)
+                    eta += ", 每 {0} {1}".format(rn, ru)
                     if rn != 1:
-                        eta += "s"
+                        eta += ""
 
                 eta += ")"
 
@@ -141,8 +141,8 @@ label trm_topic_reminder_create(recurring):
     label .set_note:
         python:
             note = mas_input(
-                "What should I remind you about?",
-                allow="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789",
+                "需要我帮你记住什么呢?",
+                #allow="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789",
                 length=32,
                 screen_kwargs={"use_return_button": True}
             )
@@ -162,24 +162,25 @@ label trm_topic_reminder_create(recurring):
             jump .set_note
 
     if recurring:
-        $ quip = "Okay! Now pick when should how often should remind you about it."
+        $ quip = "好的! 现在告诉我多久提醒你一次."
     else:
-        $ quip = "Okay! Now pick when should I remind you about it."
+        $ quip = "好的! 现在告诉我多久以后提醒你."
     m 3eub "[quip]"
 
     python:
-        item_prefix = "Every " if recurring else "In "
+        item_prefix = "每 " if recurring else "在 "
+        item_aftfix = "" if recurring else "后"
         items = [
-            (item_prefix + "5 minutes", datetime.timedelta(seconds=300), False, False),
-            (item_prefix + "10 minutes", datetime.timedelta(seconds=600), False, False),
-            (item_prefix + "15 minutes", datetime.timedelta(seconds=900), False, False),
-            (item_prefix + "30 minutes", datetime.timedelta(seconds=1800), False, False),
-            (item_prefix + "1 hour", datetime.timedelta(seconds=3600), False, False),
-            (item_prefix + "2 hours", datetime.timedelta(seconds=7200), False, False),
-            (item_prefix + "3 hours", datetime.timedelta(seconds=10800), False, False),
-            (item_prefix + "6 hours", datetime.timedelta(seconds=21600), False, False),
-            (item_prefix + "12 hours", datetime.timedelta(seconds=43200), False, False),
-            (item_prefix + "24 hours", datetime.timedelta(days=1), False, False)
+            (item_prefix + "5 分钟" + item_aftfix, datetime.timedelta(seconds=300), False, False),
+            (item_prefix + "10 分钟" + item_aftfix, datetime.timedelta(seconds=600), False, False),
+            (item_prefix + "15 分钟" + item_aftfix, datetime.timedelta(seconds=900), False, False),
+            (item_prefix + "30 分钟" + item_aftfix, datetime.timedelta(seconds=1800), False, False),
+            (item_prefix + "1 小时" + item_aftfix, datetime.timedelta(seconds=3600), False, False),
+            (item_prefix + "2 小时" + item_aftfix, datetime.timedelta(seconds=7200), False, False),
+            (item_prefix + "3 小时" + item_aftfix, datetime.timedelta(seconds=10800), False, False),
+            (item_prefix + "6 小时" + item_aftfix, datetime.timedelta(seconds=21600), False, False),
+            (item_prefix + "12 小时" + item_aftfix, datetime.timedelta(seconds=43200), False, False),
+            (item_prefix + "24 小时" + item_aftfix, datetime.timedelta(days=1), False, False)
         ]
 
     show monika at t21

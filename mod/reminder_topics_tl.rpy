@@ -16,19 +16,19 @@ translate chinese trm_ev_reminder_delegate_30d0c7d7:
 translate chinese trm_ev_reminder_delegate_e41aef2b:
 
     # extend 7dub "It says... [note]!"
-    extend 7dub "上面说... [注意]!"
+    extend 7dub "上面说... [note]!"
 
 # game/Submods/Timers and Reminders/reminder_topics.rpy:91
 translate chinese trm_topic_reminder_remove_45562a56:
 
     # m 3eub "Okay, I'll stop!"
-    m 3eub "好好,我会停下!"
+    m 3eub "好好, 我会停下!"
 
 # game/Submods/Timers and Reminders/reminder_topics.rpy:97
 translate chinese trm_topic_reminder_remove_b7d1fb4d:
 
     # m 3eka "Oh, okay."
-    m 3eka "嗯,好."
+    m 3eka "哦, 好吧."
 
 # game/Submods/Timers and Reminders/reminder_topics.rpy:139
 translate chinese trm_topic_reminder_create_5cbf5379:
@@ -84,3 +84,37 @@ translate chinese trm_topic_reminder_create_set_note_663ef89b:
     # m 1hua "Okay! I'll be sure not to forget~"
     m 1hua "好的! 我不会忘掉它的~"
 
+translate chinese python:
+    addEvent(
+        Event(
+            persistent.event_database,
+            eventlabel="trm_topic_reminder_remove",
+            prompt="有些事情你可以不用再提醒我了?",
+            category=["其他"],
+            pool=True,
+            rules={"no_unlock": None}
+        ),
+        code="EVE"
+    )
+    addEvent(
+        Event(
+            persistent.event_database,
+            eventlabel="trm_topic_reminder_oneshot",
+            prompt="你可以为我计时吗?",
+            category=["其他"],
+            pool=True,
+            unlocked=True
+        ),
+        code="EVE"
+    )
+    addEvent(
+        Event(
+            persistent.event_database,
+            eventlabel="trm_topic_reminder_recurring",
+            prompt="你可以定期提醒我一件事吗?",
+            category=["其他"],
+            pool=True,
+            unlocked=True
+        ),
+        code="EVE"
+    )
